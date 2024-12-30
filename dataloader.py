@@ -1,22 +1,38 @@
+from enum import Enum, auto
 import cv2
 import os
 import matplotlib.pyplot as plt
-
-# Dataset paths
-PARKING = "data/parking/images/"
-KITTI = "data/kitti05/kitti/05/image_0/"
+import numpy as np
 
 
-def image_iterator(path):
-    """
-    An iterator that yields images as NumPy arrays from a folder in alphabetical order.
+class Dataset(Enum):
+    PARKING = auto()
+    KITTI = auto()
+    MALAGA = auto()
 
-    Args:
-        path (str): The folder containing the images.
 
-    Yields:
-        np.ndarray: The image as a NumPy array.
-    """
+image_paths = {
+    Dataset.PARKING: "data/parking/images/",
+    Dataset.KITTI: "data/kitti05/kitti/05/image_0/",
+}
+
+intrinsics = {
+    Dataset.PARKING: np.array([[331.37, 0, 320], [0, 369.568, 240], [0, 0, 1]]),
+}
+
+
+def get_intrinsics(dataset: Dataset) -> np.ndarray:
+    if dataset in intrinsics:
+        return intrinsics[dataset]
+    else:
+        raise ValueError(f"Intrinsic matrix not defined for dataset {dataset}.")
+
+
+def get_image_iterator(dataset: Dataset):
+    if dataset not in image_paths:
+        raise ValueError(f"Path not defined for dataset {dataset}.")
+
+    path = image_paths[dataset]
     files = sorted(os.listdir(path))
 
     for file in files:
@@ -26,18 +42,3 @@ def image_iterator(path):
             yield image
         else:
             print(f"Warning: File '{file}' could not be read as an image.")
-
-
-if __name__ == "__main__":
-    # Usage example
-    fig, ax = plt.subplots()
-    plt.ion()  # Turn on interactive mode for live updates
-
-    for image in image_iterator(PARKING):
-        ax.clear()  # Clear previous frame
-        ax.imshow(image, cmap="gray")  # Display the current frame
-        ax.axis("off")  # Hide axes for better visualization
-        plt.pause(0.03)  # Pause to simulate frame rate (adjust as needed)
-
-    plt.ioff()  # Turn off interactive mode
-    plt.show()  # Keep the final frame open
