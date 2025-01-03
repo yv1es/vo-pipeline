@@ -3,15 +3,13 @@ import matplotlib.pyplot as plt
 import numpy as np
 import parameters as params
 
-from bootstrap import bootstrapping_klt, bootstrapping_sift
+from bootstrap import bootstrapping_klt
 from continuous_vo import process
 from dataloader import get_image_iterator, get_intrinsics, Dataset
 from visualizer import Visualizer
 
 
-DATASET = Dataset.MALAGA
 DATASET = Dataset.PARKING
-DATASET = Dataset.KITTI
 
 
 def main():

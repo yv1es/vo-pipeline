@@ -1,4 +1,6 @@
-data/
+data/*
+!data/
+!data/.gitkeep
 .vscode/
 .venv/
 __pycache__/
